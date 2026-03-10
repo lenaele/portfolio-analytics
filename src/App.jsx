@@ -105,37 +105,25 @@ function generatePrices(ticker, days = 252) {
   return { prices, name: profile.name, currency: profile.currency, simulated: true };
 }
 
-// ── FETCH: try live Yahoo Finance, fall back to simulation ───────────────────
-// Note: direct browser fetches to Yahoo Finance are blocked by CORS.
-// We attempt a public CORS proxy first; if that fails (network sandbox, rate
-// limit, etc.) we fall back to a deterministic GBM simulation so the app
-// always works and never shows "fetch failed".
-async function tryFetchYahoo(ticker) {
-  const yUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?range=1y&interval=1d&includePrePost=false`;
-  const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(yUrl)}`;
+// ── FETCH: use Vercel backend proxy → fallback to simulation ─────────────────
+// On Vercel, /api/quote?ticker=AAPL calls our serverless function (no CORS).
+// Locally (npm run dev) it also works via Vite's proxy config.
+// If both fail we fall back to deterministic GBM simulation.
+async function tryFetchViaBackend(ticker) {
   try {
-    const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(7000) });
+    const res = await fetch(`/api/quote?ticker=${encodeURIComponent(ticker)}`, {
+      signal: AbortSignal.timeout(8000),
+    });
     if (!res.ok) return null;
-    const raw = await res.text();
-    let json; try { json = JSON.parse(raw); } catch { return null; }
-    const result = json?.chart?.result?.[0];
-    if (!result) return null;
-    const timestamps = result.timestamp;
-    const closes = result.indicators.quote[0].close;
-    const meta = result.meta;
-    const prices = timestamps
-      .map((ts, i) => ({ date: new Date(ts * 1000).toISOString().slice(0, 10), price: closes[i] ?? null }))
-      .filter(d => d.price !== null && isFinite(d.price));
-    if (prices.length < 10) return null;
-    return { prices, name: meta.shortName || ticker, currency: meta.currency || "USD", simulated: false };
+    const data = await res.json();
+    if (!data.prices || data.prices.length < 10) return null;
+    return { prices: data.prices, name: data.name, currency: data.currency, simulated: false };
   } catch { return null; }
 }
 
 async function fetchTickerData(ticker) {
   const t = ticker.toUpperCase();
-  // Small artificial delay so the loading state is visible
-  await new Promise(r => setTimeout(r, 300 + Math.random() * 400));
-  const live = await tryFetchYahoo(t);
+  const live = await tryFetchViaBackend(t);
   if (live) return live;
   // Always-available fallback: realistic GBM simulation seeded by ticker name
   return generatePrices(t);
