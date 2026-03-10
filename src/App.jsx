@@ -109,9 +109,9 @@ function generatePrices(ticker, days = 252) {
 // On Vercel, /api/quote?ticker=AAPL calls our serverless function (no CORS).
 // Locally (npm run dev) it also works via Vite's proxy config.
 // If both fail we fall back to deterministic GBM simulation.
-async function tryFetchViaBackend(ticker) {
+async function tryFetchViaBackend(ticker, range = "1y") {
   try {
-    const res = await fetch(`/api/quote?ticker=${encodeURIComponent(ticker)}`, {
+    const res = await fetch(`/api/quote?ticker=${encodeURIComponent(ticker)}&range=${range}`, {
       signal: AbortSignal.timeout(8000),
     });
     if (!res.ok) return null;
@@ -121,9 +121,9 @@ async function tryFetchViaBackend(ticker) {
   } catch { return null; }
 }
 
-async function fetchTickerData(ticker) {
+async function fetchTickerData(ticker, range = "1y") {
   const t = ticker.toUpperCase();
-  const live = await tryFetchViaBackend(t);
+  const live = await tryFetchViaBackend(t, range);
   if (live) return live;
   // Always-available fallback: realistic GBM simulation seeded by ticker name
   return generatePrices(t);
@@ -388,20 +388,32 @@ const DEFAULT_PORTFOLIO = {
   AMZN:  { weight: "15", name: "Amazon.com Inc.", days: null, currency: "USD" },
 };
 
+const RANGES = [
+  { label: "1M",  value: "1mo" },
+  { label: "3M",  value: "3mo" },
+  { label: "6M",  value: "6mo" },
+  { label: "1Y",  value: "1y"  },
+  { label: "2Y",  value: "2y"  },
+  { label: "5Y",  value: "5y"  },
+  { label: "Max", value: "max" },
+];
+
 export default function App() {
   const [portfolio, setPortfolio] = useState(DEFAULT_PORTFOLIO);
   const [priceMap, setPriceMap] = useState({});
   const [loadingTickers, setLoadingTickers] = useState(new Set());
   const [metrics, setMetrics] = useState(null);
   const [tab, setTab] = useState("overview");
+  const [range, setRange] = useState("1y");
   const fetchedRef = useRef(new Set());
 
   // Fetch a single ticker — fetchTickerData never throws, always returns data
-  const fetchTicker = useCallback(async (ticker) => {
-    if (fetchedRef.current.has(ticker)) return;
-    fetchedRef.current.add(ticker);
+  const fetchTicker = useCallback(async (ticker, r = "1y") => {
+    const key = ticker + "_" + r;
+    if (fetchedRef.current.has(key)) return;
+    fetchedRef.current.add(key);
     setLoadingTickers(s => new Set([...s, ticker]));
-    const data = await fetchTickerData(ticker);
+    const data = await fetchTickerData(ticker, r);
     setPriceMap(prev => ({ ...prev, [ticker]: data }));
     setPortfolio(prev => ({
       ...prev,
@@ -410,9 +422,16 @@ export default function App() {
     setLoadingTickers(s => { const n = new Set(s); n.delete(ticker); return n; });
   }, []);
 
+  // Fetch all tickers when range changes
+  useEffect(() => {
+    fetchedRef.current = new Set(); // reset cache so new range is fetched
+    setPriceMap({});
+    Object.keys(portfolio).forEach(t => fetchTicker(t, range));
+  }, [range]);
+
   // Initial fetch
   useEffect(() => {
-    Object.keys(DEFAULT_PORTFOLIO).forEach(fetchTicker);
+    Object.keys(DEFAULT_PORTFOLIO).forEach(t => fetchTicker(t, range));
   }, []);
 
   // Recompute metrics when priceMap or weights change
@@ -431,7 +450,7 @@ export default function App() {
   const handleUpdate = async (action, ticker, value) => {
     if (action === "add") {
       setPortfolio(prev => ({ ...prev, [ticker]: { weight: "10", name: null, days: null, currency: null } }));
-      await fetchTicker(ticker);
+      await fetchTicker(ticker, range);
     } else if (action === "remove") {
       setPortfolio(prev => { const n = { ...prev }; delete n[ticker]; return n; });
       setPriceMap(prev => { const n = { ...prev }; delete n[ticker]; return n; });
@@ -498,8 +517,9 @@ export default function App() {
             </div>
           </div>
 
-          {/* Tab bar */}
-          <div style={{ display: "flex", gap: 4, paddingBottom: 10 }}>
+          {/* Tab bar + Range selector */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingBottom: 10, flexWrap: "wrap", gap: 8 }}>
+            <div style={{ display: "flex", gap: 4 }}>
             {TABS.map(t => (
               <button key={t.id} onClick={() => setTab(t.id)} style={{
                 background: tab === t.id ? T.accent : "transparent",
@@ -510,6 +530,24 @@ export default function App() {
                 letterSpacing: "0.04em", transition: "all 0.15s"
               }}>{t.label}</button>
             ))}
+            </div>
+            {/* Range selector */}
+            <div style={{ display: "flex", gap: 3, background: T.bg, borderRadius: 8, padding: 3, border: `1px solid ${T.border}` }}>
+              {RANGES.map(r => (
+                <button
+                  key={r.value}
+                  onClick={() => setRange(r.value)}
+                  style={{
+                    background: range === r.value ? T.accent : "transparent",
+                    color: range === r.value ? T.bg : T.muted,
+                    border: "none", borderRadius: 6,
+                    padding: "4px 10px", cursor: "pointer",
+                    fontSize: 11, fontWeight: 700, fontFamily: "monospace",
+                    transition: "all 0.15s", whiteSpace: "nowrap"
+                  }}
+                >{r.label}</button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
