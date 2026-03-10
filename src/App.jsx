@@ -5,56 +5,44 @@ import {
   Tooltip, ResponsiveContainer, ReferenceLine, Legend
 } from "recharts";
 
-// ── THEME ─────────────────────────────────────────────────────────────────────
-const T = {
-  bg: "#07090F",
-  surface: "#0E1118",
-  surfaceHigh: "#141720",
-  border: "#1C2030",
-  borderLight: "#252A3A",
-  accent: "#00E5A0",
-  accentDim: "#00E5A020",
-  red: "#FF4560",
-  amber: "#FFB400",
-  blue: "#3B82F6",
-  purple: "#A78BFA",
-  text: "#E8EDF5",
-  muted: "#5A6480",
-  mutedLight: "#8892AA",
+// ── THEMES ────────────────────────────────────────────────────────────────────
+const DARK = {
+  bg: "#07090F", surface: "#0E1118", surfaceHigh: "#141720",
+  border: "#1C2030", borderLight: "#252A3A",
+  accent: "#00E5A0", accentDim: "#00E5A020",
+  red: "#FF4560", amber: "#FFB400", blue: "#3B82F6", purple: "#A78BFA",
+  text: "#E8EDF5", muted: "#5A6480", mutedLight: "#8892AA",
+  tooltip: "#0E1118", isDark: true,
+};
+const LIGHT = {
+  bg: "#F4F6FA", surface: "#FFFFFF", surfaceHigh: "#EEF1F8",
+  border: "#DDE2EE", borderLight: "#CDD4E8",
+  accent: "#00A878", accentDim: "#00A87815",
+  red: "#E03050", amber: "#D09000", blue: "#2563EB", purple: "#7C3AED",
+  text: "#0F1623", muted: "#6B7898", mutedLight: "#8892AA",
+  tooltip: "#FFFFFF", isDark: false,
 };
 
 // ── TICKER PROFILES ───────────────────────────────────────────────────────────
-// Each ticker has realistic drift/vol characteristics and a starting price.
-// Unknown tickers get default mid-cap profile.
 const TICKER_PROFILES = {
-  AAPL:  { name: "Apple Inc.",          start: 185,  drift: 0.00055, vol: 0.016, currency: "USD" },
-  MSFT:  { name: "Microsoft Corp.",     start: 374,  drift: 0.00060, vol: 0.015, currency: "USD" },
-  GOOGL: { name: "Alphabet Inc.",       start: 140,  drift: 0.00050, vol: 0.017, currency: "USD" },
-  AMZN:  { name: "Amazon.com Inc.",     start: 153,  drift: 0.00058, vol: 0.019, currency: "USD" },
-  NVDA:  { name: "NVIDIA Corp.",        start: 495,  drift: 0.00110, vol: 0.030, currency: "USD" },
-  TSLA:  { name: "Tesla Inc.",          start: 248,  drift: 0.00040, vol: 0.038, currency: "USD" },
-  META:  { name: "Meta Platforms",      start: 353,  drift: 0.00075, vol: 0.022, currency: "USD" },
-  SPY:   { name: "SPDR S&P 500 ETF",   start: 470,  drift: 0.00035, vol: 0.010, currency: "USD" },
-  QQQ:   { name: "Invesco QQQ Trust",  start: 400,  drift: 0.00045, vol: 0.013, currency: "USD" },
-  BTC:   { name: "Bitcoin (simulated)", start: 42000,drift: 0.00120, vol: 0.045, currency: "USD" },
-  "BTC-USD": { name: "Bitcoin USD",    start: 42000,drift: 0.00120, vol: 0.045, currency: "USD" },
-  ETH:   { name: "Ethereum (sim.)",    start: 2200, drift: 0.00090, vol: 0.050, currency: "USD" },
-  "ETH-USD": { name: "Ethereum USD",  start: 2200, drift: 0.00090, vol: 0.050, currency: "USD" },
-  GLD:   { name: "SPDR Gold Shares",   start: 185,  drift: 0.00020, vol: 0.008, currency: "USD" },
-  TLT:   { name: "iShares 20Y Bond",   start: 96,   drift: -0.00010,vol: 0.009, currency: "USD" },
-  VTI:   { name: "Vanguard Total Mkt", start: 218,  drift: 0.00040, vol: 0.011, currency: "USD" },
-  ARKK:  { name: "ARK Innovation ETF", start: 48,   drift: -0.00020,vol: 0.032, currency: "USD" },
-  NFLX:  { name: "Netflix Inc.",       start: 480,  drift: 0.00065, vol: 0.024, currency: "USD" },
-  AMD:   { name: "Advanced Micro Dev.", start: 140,  drift: 0.00080, vol: 0.028, currency: "USD" },
-  INTC:  { name: "Intel Corp.",        start: 43,   drift: -0.00025,vol: 0.020, currency: "USD" },
-  JPM:   { name: "JPMorgan Chase",     start: 190,  drift: 0.00045, vol: 0.014, currency: "USD" },
-  BAC:   { name: "Bank of America",    start: 33,   drift: 0.00030, vol: 0.016, currency: "USD" },
-  XOM:   { name: "ExxonMobil Corp.",   start: 100,  drift: 0.00035, vol: 0.015, currency: "USD" },
-  "^GSPC":{ name: "S&P 500 Index",    start: 4800, drift: 0.00035, vol: 0.010, currency: "USD" },
-  "EURUSD=X":{ name: "EUR/USD Forex", start: 1.09, drift: 0.00002, vol: 0.005, currency: "USD" },
+  AAPL:  { name: "Apple Inc.",          start: 185,   drift: 0.00055, vol: 0.016 },
+  MSFT:  { name: "Microsoft Corp.",     start: 374,   drift: 0.00060, vol: 0.015 },
+  GOOGL: { name: "Alphabet Inc.",       start: 140,   drift: 0.00050, vol: 0.017 },
+  AMZN:  { name: "Amazon.com Inc.",     start: 153,   drift: 0.00058, vol: 0.019 },
+  NVDA:  { name: "NVIDIA Corp.",        start: 495,   drift: 0.00110, vol: 0.030 },
+  TSLA:  { name: "Tesla Inc.",          start: 248,   drift: 0.00040, vol: 0.038 },
+  META:  { name: "Meta Platforms",      start: 353,   drift: 0.00075, vol: 0.022 },
+  SPY:   { name: "SPDR S&P 500 ETF",   start: 470,   drift: 0.00035, vol: 0.010 },
+  QQQ:   { name: "Invesco QQQ Trust",  start: 400,   drift: 0.00045, vol: 0.013 },
+  "BTC-USD": { name: "Bitcoin USD",    start: 42000, drift: 0.00120, vol: 0.045 },
+  "ETH-USD": { name: "Ethereum USD",   start: 2200,  drift: 0.00090, vol: 0.050 },
+  GLD:   { name: "SPDR Gold Shares",   start: 185,   drift: 0.00020, vol: 0.008 },
+  TLT:   { name: "iShares 20Y Bond",   start: 96,    drift: -0.00010,vol: 0.009 },
+  VTI:   { name: "Vanguard Total Mkt", start: 218,   drift: 0.00040, vol: 0.011 },
+  JPM:   { name: "JPMorgan Chase",     start: 190,   drift: 0.00045, vol: 0.014 },
+  AMD:   { name: "Advanced Micro Dev.",start: 140,   drift: 0.00080, vol: 0.028 },
 };
 
-// Deterministic seeded random (mulberry32) — same ticker always gives same curve
 function seededRng(seed) {
   let s = seed >>> 0;
   return () => {
@@ -64,114 +52,84 @@ function seededRng(seed) {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
-
 function tickerSeed(ticker) {
   let h = 5381;
   for (let i = 0; i < ticker.length; i++) h = (Math.imul(h, 33) ^ ticker.charCodeAt(i)) >>> 0;
   return h;
 }
-
-// Generate realistic GBM price series (252 trading days)
 function generatePrices(ticker, days = 252) {
-  const profile = TICKER_PROFILES[ticker.toUpperCase()] || {
-    name: ticker, start: 100, drift: 0.00030, vol: 0.020, currency: "USD"
-  };
+  const p = TICKER_PROFILES[ticker.toUpperCase()] || { name: ticker, start: 100, drift: 0.0003, vol: 0.020 };
   const rng = seededRng(tickerSeed(ticker));
-  // Box-Muller for normal distribution
-  const randn = () => {
-    const u = 1 - rng(), v = rng();
-    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
-  };
-
-  let price = profile.start;
+  const randn = () => { const u = 1 - rng(), v = rng(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+  let price = p.start;
   const prices = [];
-  const baseDate = new Date("2024-01-02");
-
-  for (let i = 0; i < days; i++) {
-    // Skip weekends
-    const d = new Date(baseDate);
-    let tradingDay = 0, cal = 0;
-    while (tradingDay <= i) {
-      const dd = new Date(baseDate); dd.setDate(dd.getDate() + cal);
-      const dow = dd.getDay();
-      if (dow !== 0 && dow !== 6) tradingDay++;
-      if (tradingDay <= i) cal++;
-      else { d.setDate(baseDate.getDate() + cal); break; }
+  const base = new Date("2024-01-02");
+  let cal = 0, trading = 0;
+  while (trading < days) {
+    const d = new Date(base); d.setDate(base.getDate() + cal);
+    if (d.getDay() !== 0 && d.getDay() !== 6) {
+      price = price * Math.exp((p.drift - 0.5 * p.vol ** 2) + p.vol * randn());
+      prices.push({ date: d.toISOString().slice(0, 10), price: +price.toFixed(4) });
+      trading++;
     }
-    // GBM step
-    price = price * Math.exp((profile.drift - 0.5 * profile.vol ** 2) + profile.vol * randn());
-    prices.push({ date: d.toISOString().slice(0, 10), price: +price.toFixed(4) });
+    cal++;
   }
-  return { prices, name: profile.name, currency: profile.currency, simulated: true };
+  return { prices, name: p.name, currency: "USD", simulated: true };
 }
 
-// ── FETCH: use Vercel backend proxy → fallback to simulation ─────────────────
-// On Vercel, /api/quote?ticker=AAPL calls our serverless function (no CORS).
-// Locally (npm run dev) it also works via Vite's proxy config.
-// If both fail we fall back to deterministic GBM simulation.
+// ── FETCH ─────────────────────────────────────────────────────────────────────
 async function tryFetchViaBackend(ticker, range = "1y") {
   try {
-    const res = await fetch(`/api/quote?ticker=${encodeURIComponent(ticker)}&range=${range}`, {
-      signal: AbortSignal.timeout(8000),
-    });
+    const res = await fetch(`/api/quote?ticker=${encodeURIComponent(ticker)}&range=${range}`, { signal: AbortSignal.timeout(8000) });
     if (!res.ok) return null;
     const data = await res.json();
     if (!data.prices || data.prices.length < 10) return null;
     return { prices: data.prices, name: data.name, currency: data.currency, simulated: false };
   } catch { return null; }
 }
-
 async function fetchTickerData(ticker, range = "1y") {
-  const t = ticker.toUpperCase();
-  const live = await tryFetchViaBackend(t, range);
-  if (live) return live;
-  // Always-available fallback: realistic GBM simulation seeded by ticker name
-  return generatePrices(t);
+  const live = await tryFetchViaBackend(ticker.toUpperCase(), range);
+  return live || generatePrices(ticker.toUpperCase());
 }
 
 // ── FINANCE MATH ──────────────────────────────────────────────────────────────
-function computeMetrics(priceMap, weights) {
+function computeMetrics(priceMap, weights, benchmarkMap) {
   const tickers = Object.keys(weights);
   if (tickers.length === 0) return null;
-
-  // Align dates
-  const datesets = tickers.map(t => priceMap[t]?.prices?.map(d => d.date) ?? []);
-  const commonDates = datesets.reduce((a, b) => {
-    const bSet = new Set(b);
-    return a.filter(d => bSet.has(d));
-  });
+  const allKeys = [...tickers, ...Object.keys(benchmarkMap)];
+  const datesets = allKeys.map(t => (priceMap[t] || benchmarkMap[t])?.prices?.map(d => d.date) ?? []);
+  const commonDates = datesets.reduce((a, b) => { const s = new Set(b); return a.filter(d => s.has(d)); });
   if (commonDates.length < 5) return null;
-
   const totalW = tickers.reduce((s, t) => s + (weights[t] || 0), 0);
 
-  // Portfolio cumulative return series
-  const series = commonDates.map(date => {
-    let portVal = 0;
-    const base = {};
+  const portValues = commonDates.map(date => {
+    let val = 0;
     tickers.forEach(t => {
-      base[t] = priceMap[t].prices[0]?.price ?? 1;
+      const prices = priceMap[t].prices;
+      const p0 = prices[0].price;
+      const rec = prices.find(d => d.date === date);
+      val += (weights[t] / totalW) * ((rec?.price ?? p0) / p0);
     });
-    tickers.forEach(t => {
-      const rec = priceMap[t].prices.find(d => d.date === date);
-      const p0 = priceMap[t].prices[0]?.price ?? 1;
-      const pi = rec?.price ?? p0;
-      portVal += (weights[t] / totalW) * (pi / p0);
-    });
-    return { date, portfolio: +((portVal - 1) * 100).toFixed(3) };
+    return val;
   });
 
-  // Daily returns
-  const dailyRets = series.map((d, i) =>
-    i === 0 ? 0 : (series[i].portfolio - series[i - 1].portfolio) / 100
-  ).slice(1);
+  const series = commonDates.map((date, i) => {
+    const obj = { date, portfolio: +((portValues[i] - 1) * 100).toFixed(3) };
+    Object.entries(benchmarkMap).forEach(([bKey, bData]) => {
+      const p0 = bData.prices[0].price;
+      const rec = bData.prices.find(d => d.date === date);
+      obj[bKey] = +((((rec?.price ?? p0) / p0) - 1) * 100).toFixed(3);
+    });
+    return obj;
+  });
 
+  const dailyRets = portValues.map((v, i) => i === 0 ? 0 : (v - portValues[i-1]) / portValues[i-1]).slice(1);
   const n = dailyRets.length;
   const mean = dailyRets.reduce((a, b) => a + b, 0) / n;
   const variance = dailyRets.reduce((a, b) => a + (b - mean) ** 2, 0) / (n - 1);
   const std = Math.sqrt(variance);
   const annVol = std * Math.sqrt(252) * 100;
   const sharpe = (mean / std) * Math.sqrt(252);
-
   const downside = dailyRets.filter(r => r < 0);
   const downsideStd = Math.sqrt(downside.reduce((a, b) => a + b ** 2, 0) / (downside.length || 1));
   const sortino = (mean / downsideStd) * Math.sqrt(252);
@@ -189,47 +147,177 @@ function computeMetrics(priceMap, weights) {
   const var95idx = Math.floor(sorted.length * 0.05);
   const var95 = sorted[var95idx] * 100;
   const es95 = sorted.slice(0, var95idx).reduce((a, b) => a + b, 0) / (var95idx || 1) * 100;
-
-  // Rolling 20-day vol
   const rollingVol = series.map((d, i) => {
     if (i < 20) return { date: d.date, vol: null };
     const w = dailyRets.slice(i - 20, i);
     const wm = w.reduce((a, b) => a + b, 0) / 20;
-    const ws = Math.sqrt(w.reduce((a, b) => a + (b - wm) ** 2, 0) / 19);
-    return { date: d.date, vol: +(ws * Math.sqrt(252) * 100).toFixed(2) };
+    return { date: d.date, vol: +(Math.sqrt(w.reduce((a, b) => a + (b - wm) ** 2, 0) / 19) * Math.sqrt(252) * 100).toFixed(2) };
   });
-
-  // Return distribution
   const bins = Array.from({ length: 22 }, (_, i) => {
     const lo = -3.3 + i * 0.3;
-    const hi = lo + 0.3;
-    return {
-      range: lo.toFixed(1),
-      count: dailyRets.filter(r => r * 100 >= lo && r * 100 < hi).length,
-    };
+    return { range: lo.toFixed(1), count: dailyRets.filter(r => r * 100 >= lo && r * 100 < lo + 0.3).length };
   });
+
+  // Benchmark-relative metrics
+  const benchmarkMetrics = {};
+  Object.entries(benchmarkMap).forEach(([bKey, bData]) => {
+    const bPrices = bData.prices.filter(d => commonDates.includes(d.date));
+    if (bPrices.length < 2) return;
+    const bRets = bPrices.map((d, i) => i === 0 ? 0 : (d.price - bPrices[i-1].price) / bPrices[i-1].price).slice(1);
+    const bMean = bRets.reduce((a, b) => a + b, 0) / bRets.length;
+    const bStd = Math.sqrt(bRets.reduce((a, b) => a + (b - bMean) ** 2, 0) / (bRets.length - 1));
+    const cov = dailyRets.reduce((s, r, i) => s + (r - mean) * (bRets[i] - bMean), 0) / (n - 1);
+    const beta = cov / (bStd ** 2);
+    const alpha = (mean - beta * bMean) * 252 * 100;
+    const active = dailyRets.map((r, i) => r - bRets[i]);
+    const activeMean = active.reduce((a, b) => a + b, 0) / active.length;
+    const te = Math.sqrt(active.reduce((a, b) => a + (b - activeMean) ** 2, 0) / (active.length - 1)) * Math.sqrt(252) * 100;
+    const ir = (activeMean * 252) / (te / 100);
+    const corr = cov / (std * bStd);
+    benchmarkMetrics[bKey] = { beta: +beta.toFixed(3), alpha: +alpha.toFixed(2), te: +te.toFixed(2), ir: +ir.toFixed(2), corr: +corr.toFixed(3) };
+  });
+
+  const annReturn = mean * 252 * 100;
+  const calmar = maxDD > 0 ? +(annReturn / maxDD).toFixed(2) : null;
 
   return {
     series, drawdownSeries, rollingVol, bins,
     totalReturn: series[series.length - 1]?.portfolio ?? 0,
+    annReturn: +annReturn.toFixed(2),
     annVol: +annVol.toFixed(2),
     sharpe: +sharpe.toFixed(2),
     sortino: +sortino.toFixed(2),
-    maxDD: +maxDD.toFixed(2),
-    var95: +var95.toFixed(2),
-    es95: +es95.toFixed(2),
-    days: commonDates.length,
+    calmar, maxDD: +maxDD.toFixed(2),
+    var95: +var95.toFixed(2), es95: +es95.toFixed(2),
+    days: commonDates.length, benchmarkMetrics,
   };
 }
 
-// ── HELPERS ───────────────────────────────────────────────────────────────────
-const fmt = (v, dec = 2) => (typeof v === "number" ? v.toFixed(dec) : "—");
-const PALETTE = [T.accent, T.red, T.blue, T.purple, T.amber, "#F472B6", "#34D399", "#60A5FA"];
+// ── CONSTANTS ─────────────────────────────────────────────────────────────────
+const RANGES = [
+  { label: "1M", value: "1mo" }, { label: "3M", value: "3mo" },
+  { label: "6M", value: "6mo" }, { label: "1Y", value: "1y"  },
+  { label: "2Y", value: "2y"  }, { label: "5Y", value: "5y"  },
+  { label: "Max",value: "max" },
+];
+const BENCHMARKS = ["SPY", "QQQ"];
+const PALETTE = ["#00E5A0","#FF4560","#3B82F6","#A78BFA","#FFB400","#F472B6","#34D399","#60A5FA"];
+const BENCH_COLORS = { SPY: "#94A3B8", QQQ: "#60A5FA" };
+const METRIC_TOOLTIPS = {
+  "Total Return": "Total percentage gain/loss over the selected period.",
+  "Ann. Return": "Total return scaled to a 1-year equivalent.",
+  "Sharpe Ratio": "Excess return per unit of total risk. Above 1.0 is good, above 2.0 is excellent.",
+  "Sortino Ratio": "Like Sharpe but only penalises downside volatility — more relevant for asymmetric returns.",
+  "Calmar Ratio": "Annualised return divided by max drawdown. Above 1.0 means returns compensate for drawdown risk.",
+  "Volatility": "Annualised standard deviation of daily returns.",
+  "Max Drawdown": "Largest peak-to-trough decline. Key metric for capital preservation.",
+  "VaR 95% (1d)": "Worst daily loss expected 95% of the time (historical simulation).",
+  "Exp. Shortfall": "Average loss on the worst 5% of days — what you lose when VaR is breached (CVaR).",
+  "Beta": "Sensitivity to benchmark. β > 1 = more volatile than market; β < 0 = inversely correlated.",
+  "Alpha (ann.)": "Jensen's Alpha: annualised excess return after adjusting for market risk. Positive = outperformance.",
+  "Tracking Error": "Annualised std dev of active returns vs benchmark. Lower = more index-like.",
+  "Info. Ratio": "Active return divided by tracking error. Above 0.5 is strong skill signal.",
+  "Correlation": "Pearson correlation of daily returns with benchmark.",
+};
+const DEFAULT_PORTFOLIO = {
+  AAPL:  { weight: "25", name: "Apple Inc.",      days: null, currency: "USD" },
+  MSFT:  { weight: "20", name: "Microsoft Corp.", days: null, currency: "USD" },
+  GOOGL: { weight: "20", name: "Alphabet Inc.",   days: null, currency: "USD" },
+  NVDA:  { weight: "20", name: "NVIDIA Corp.",    days: null, currency: "USD" },
+  AMZN:  { weight: "15", name: "Amazon.com Inc.", days: null, currency: "USD" },
+};
 
-const CustomTooltip = ({ active, payload, label }) => {
+// ── PDF EXPORT ────────────────────────────────────────────────────────────────
+function exportToPDF(metrics, portfolio, range) {
+  const win = window.open("", "_blank");
+  const weights = Object.entries(portfolio)
+    .map(([t, v]) => `<tr><td>${t}</td><td>${v.name || ""}</td><td style="text-align:right;font-weight:700">${v.weight}%</td></tr>`).join("");
+  const bRows = Object.entries(metrics.benchmarkMetrics || {}).map(([b, m]) =>
+    `<tr><td><strong>${b}</strong></td><td style="text-align:right">${m.beta.toFixed(3)}</td>
+    <td style="text-align:right;color:${m.alpha >= 0 ? "#00A878" : "#E03050"}">${m.alpha >= 0 ? "+" : ""}${m.alpha.toFixed(2)}%</td>
+    <td style="text-align:right">${m.te.toFixed(2)}%</td><td style="text-align:right">${m.ir.toFixed(2)}</td>
+    <td style="text-align:right">${m.corr.toFixed(3)}</td></tr>`).join("");
+  win.document.write(`<!DOCTYPE html><html><head><title>Portfolio Report</title>
+  <style>
+    body{font-family:'Segoe UI',sans-serif;max-width:900px;margin:40px auto;color:#1a1a2e;padding:0 24px}
+    h1{font-size:26px;border-bottom:3px solid #00A878;padding-bottom:12px;margin-bottom:4px}
+    h2{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:#64748b;margin:28px 0 12px}
+    .meta{color:#64748b;font-size:12px;margin-bottom:24px}
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:8px}
+    .card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px 16px;border-top:3px solid #00A878}
+    .card.r{border-top-color:#E03050}.card.b{border-top-color:#2563EB}.card.p{border-top-color:#7C3AED}.card.a{border-top-color:#D09000}
+    .lbl{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#718096;margin-bottom:5px}
+    .val{font-size:20px;font-weight:700;font-family:monospace}
+    table{width:100%;border-collapse:collapse;font-size:12px}
+    th{background:#f1f5f9;padding:9px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#64748b}
+    td{padding:9px 12px;border-bottom:1px solid #e2e8f0}
+    .footer{margin-top:36px;font-size:10px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:14px}
+  </style></head><body>
+  <h1>📊 Portfolio Analytics Report</h1>
+  <div class="meta">Period: <strong>${range.toUpperCase()}</strong> &nbsp;·&nbsp; Date: <strong>${new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</strong> &nbsp;·&nbsp; ${metrics.days} trading days &nbsp;·&nbsp; Assets: <strong>${Object.keys(portfolio).join(", ")}</strong></div>
+  <h2>Performance</h2>
+  <div class="grid">
+    <div class="card"><div class="lbl">Total Return</div><div class="val" style="color:${metrics.totalReturn>=0?"#00A878":"#E03050"}">${metrics.totalReturn>=0?"+":""}${metrics.totalReturn.toFixed(2)}%</div></div>
+    <div class="card"><div class="lbl">Ann. Return</div><div class="val">${metrics.annReturn>=0?"+":""}${metrics.annReturn.toFixed(2)}%</div></div>
+    <div class="card b"><div class="lbl">Sharpe</div><div class="val" style="color:#2563EB">${metrics.sharpe.toFixed(2)}</div></div>
+    <div class="card b"><div class="lbl">Sortino</div><div class="val" style="color:#2563EB">${metrics.sortino.toFixed(2)}</div></div>
+    <div class="card r"><div class="lbl">Max Drawdown</div><div class="val" style="color:#E03050">-${metrics.maxDD.toFixed(2)}%</div></div>
+    <div class="card p"><div class="lbl">Volatility</div><div class="val" style="color:#7C3AED">${metrics.annVol.toFixed(2)}%</div></div>
+    <div class="card a"><div class="lbl">VaR 95%</div><div class="val" style="color:#D09000">${metrics.var95.toFixed(2)}%</div></div>
+    <div class="card r"><div class="lbl">CVaR 95%</div><div class="val" style="color:#E03050">${metrics.es95.toFixed(2)}%</div></div>
+    ${metrics.calmar ? `<div class="card b"><div class="lbl">Calmar</div><div class="val" style="color:#2563EB">${metrics.calmar.toFixed(2)}</div></div>` : ""}
+  </div>
+  <h2>Weights</h2>
+  <table><thead><tr><th>Ticker</th><th>Name</th><th style="text-align:right">Weight</th></tr></thead><tbody>${weights}</tbody></table>
+  ${bRows ? `<h2>Benchmark Analysis</h2>
+  <table><thead><tr><th>Benchmark</th><th style="text-align:right">Beta</th><th style="text-align:right">Alpha (ann.)</th><th style="text-align:right">Track. Error</th><th style="text-align:right">Info. Ratio</th><th style="text-align:right">Correlation</th></tr></thead><tbody>${bRows}</tbody></table>` : ""}
+  <div class="footer">Portfolio Analytics Dashboard &nbsp;·&nbsp; Yahoo Finance data &nbsp;·&nbsp; Generated ${new Date().toISOString()}</div>
+  <script>window.onload=()=>window.print();</script></body></html>`);
+  win.document.close();
+}
+
+// ── TOOLTIP WIDGET ────────────────────────────────────────────────────────────
+function InfoTooltip({ text, T }) {
+  const [show, setShow] = useState(false);
+  return (
+    <span style={{ position: "relative", display: "inline-flex", alignItems: "center" }}>
+      <span onMouseEnter={() => setShow(true)} onMouseLeave={() => setShow(false)}
+        style={{ width: 14, height: 14, borderRadius: "50%", background: T.border, color: T.muted,
+          fontSize: 9, fontWeight: 700, display: "inline-flex", alignItems: "center",
+          justifyContent: "center", cursor: "help", marginLeft: 5, flexShrink: 0 }}>?</span>
+      {show && (
+        <span style={{ position: "absolute", left: 20, top: -4, background: T.tooltip,
+          border: `1px solid ${T.border}`, borderRadius: 8, padding: "8px 12px",
+          fontSize: 11, color: T.text, width: 220, zIndex: 999,
+          boxShadow: "0 8px 24px rgba(0,0,0,0.3)", lineHeight: 1.5, pointerEvents: "none" }}>{text}</span>
+      )}
+    </span>
+  );
+}
+
+// ── METRIC CARD ───────────────────────────────────────────────────────────────
+function MetricCard({ label, value, sub, color, warn, T }) {
+  const c = color || T.accent;
+  return (
+    <div style={{ background: T.surface, border: `1px solid ${warn ? T.red + "60" : T.border}`,
+      borderRadius: 10, padding: "18px 20px", position: "relative", overflow: "hidden" }}>
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: c }} />
+      <div style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
+        <span style={{ fontSize: 10, letterSpacing: "0.12em", color: T.muted, textTransform: "uppercase", fontFamily: "monospace" }}>{label}</span>
+        {METRIC_TOOLTIPS[label] && <InfoTooltip text={METRIC_TOOLTIPS[label]} T={T} />}
+      </div>
+      <div style={{ fontSize: 24, fontWeight: 700, color: c, fontFamily: "monospace", lineHeight: 1 }}>{value}</div>
+      {sub && <div style={{ fontSize: 11, color: T.muted, marginTop: 5 }}>{sub}</div>}
+    </div>
+  );
+}
+
+// ── CHART TOOLTIP ─────────────────────────────────────────────────────────────
+function ChartTooltip({ active, payload, label, T }) {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: "#0E1118", border: `1px solid ${T.border}`, borderRadius: 8, padding: "10px 14px", fontSize: 11, fontFamily: "monospace" }}>
+    <div style={{ background: T.tooltip, border: `1px solid ${T.border}`, borderRadius: 8,
+      padding: "10px 14px", fontSize: 11, fontFamily: "monospace", boxShadow: "0 4px 16px rgba(0,0,0,0.2)" }}>
       <div style={{ color: T.muted, marginBottom: 6 }}>{label}</div>
       {payload.map((p, i) => p.value !== null && (
         <div key={i} style={{ color: p.color || T.accent, marginBottom: 2 }}>
@@ -238,23 +326,12 @@ const CustomTooltip = ({ active, payload, label }) => {
       ))}
     </div>
   );
-};
-
-// ── METRIC CARD ───────────────────────────────────────────────────────────────
-const MetricCard = ({ label, value, sub, color = T.accent, warn }) => (
-  <div style={{ background: T.surface, border: `1px solid ${warn ? T.red + "60" : T.border}`, borderRadius: 10, padding: "18px 20px", position: "relative", overflow: "hidden" }}>
-    <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: color }} />
-    <div style={{ fontSize: 10, letterSpacing: "0.12em", color: T.muted, textTransform: "uppercase", fontFamily: "monospace", marginBottom: 8 }}>{label}</div>
-    <div style={{ fontSize: 24, fontWeight: 700, color, fontFamily: "monospace", lineHeight: 1 }}>{value}</div>
-    {sub && <div style={{ fontSize: 11, color: T.muted, marginTop: 5 }}>{sub}</div>}
-  </div>
-);
+}
 
 // ── PORTFOLIO EDITOR ──────────────────────────────────────────────────────────
-const PortfolioEditor = ({ portfolio, onUpdate, loadingTickers }) => {
+function PortfolioEditor({ portfolio, onUpdate, loadingTickers, T }) {
   const [newTicker, setNewTicker] = useState("");
   const [adding, setAdding] = useState(false);
-
   const totalWeight = Object.values(portfolio).reduce((s, v) => s + (parseFloat(v.weight) || 0), 0);
   const isValid = Math.abs(totalWeight - 100) < 0.01;
 
@@ -267,194 +344,132 @@ const PortfolioEditor = ({ portfolio, onUpdate, loadingTickers }) => {
     setAdding(false);
   };
 
-  const handleKey = (e) => { if (e.key === "Enter") handleAdd(); };
-
   return (
     <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
         <div>
           <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 2 }}>Portfolio Builder</div>
-          <div style={{ fontSize: 11, color: T.muted }}>Add any Yahoo Finance ticker • Weights must sum to 100%</div>
+          <div style={{ fontSize: 11, color: T.muted }}>Add any Yahoo Finance ticker · Weights must sum to 100%</div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div style={{
-            fontSize: 12, fontFamily: "monospace", fontWeight: 700,
-            color: isValid ? T.accent : totalWeight > 100 ? T.red : T.amber,
-            background: isValid ? T.accentDim : totalWeight > 100 ? T.red + "20" : T.amber + "20",
-            padding: "4px 12px", borderRadius: 6, border: `1px solid ${isValid ? T.accent + "40" : totalWeight > 100 ? T.red + "40" : T.amber + "40"}`
-          }}>
-            Σ = {totalWeight.toFixed(1)}%
-            {isValid ? " ✓" : totalWeight > 100 ? " ↑ over" : " ↓ under"}
-          </div>
+        <div style={{ fontSize: 12, fontFamily: "monospace", fontWeight: 700,
+          color: isValid ? T.accent : totalWeight > 100 ? T.red : T.amber,
+          background: isValid ? T.accentDim : T.border + "80",
+          padding: "4px 12px", borderRadius: 6 }}>
+          Σ = {totalWeight.toFixed(1)}% {isValid ? "✓" : totalWeight > 100 ? "↑" : "↓"}
         </div>
       </div>
-
-      {/* Ticker rows */}
       <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
         {Object.entries(portfolio).map(([ticker, info], i) => {
           const isLoading = loadingTickers.has(ticker);
-          const isSimulated = info.simulated === true;
           const color = PALETTE[i % PALETTE.length];
           return (
-            <div key={ticker} style={{
-              display: "flex", alignItems: "center", gap: 10,
+            <div key={ticker} style={{ display: "flex", alignItems: "center", gap: 10,
               background: T.bg, border: `1px solid ${T.borderLight}`,
-              borderRadius: 8, padding: "10px 14px",
-              opacity: isLoading ? 0.6 : 1, transition: "opacity 0.2s"
-            }}>
-              {/* Color dot */}
+              borderRadius: 8, padding: "10px 14px", opacity: isLoading ? 0.6 : 1 }}>
               <div style={{ width: 8, height: 8, borderRadius: "50%", background: color, flexShrink: 0 }} />
-              {/* Ticker + name */}
               <div style={{ minWidth: 80, flexShrink: 0 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: color, fontFamily: "monospace" }}>{ticker}</div>
-                {info.name && <div style={{ fontSize: 10, color: T.muted, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 120 }}>{info.name}</div>}
-                {isSimulated && !isLoading && <div style={{ fontSize: 10, color: T.amber }}>★ simulated</div>}
+                <div style={{ fontSize: 13, fontWeight: 700, color, fontFamily: "monospace" }}>{ticker}</div>
+                {info.name && <div style={{ fontSize: 10, color: T.muted, maxWidth: 130, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{info.name}</div>}
                 {isLoading && <div style={{ fontSize: 10, color: T.muted }}>loading…</div>}
+                {info.simulated && !isLoading && <div style={{ fontSize: 10, color: T.amber }}>★ simulated</div>}
               </div>
-              {/* Prices count */}
-              {info.days && (
-                <div style={{ fontSize: 10, color: T.muted, fontFamily: "monospace", flex: 1 }}>
-                  {info.days}d · {info.currency}
-                </div>
-              )}
-              {/* Weight input */}
+              {info.days && <div style={{ fontSize: 10, color: T.muted, fontFamily: "monospace", flex: 1 }}>{info.days}d · {info.currency}</div>}
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <input
-                  type="number"
-                  min="0" max="100" step="0.5"
-                  value={info.weight}
+                <input type="number" min="0" max="100" step="0.5" value={info.weight}
                   onChange={e => onUpdate("weight", ticker, e.target.value)}
-                  style={{
-                    width: 72, background: T.surface, border: `1px solid ${T.borderLight}`,
+                  style={{ width: 72, background: T.surface, border: `1px solid ${T.borderLight}`,
                     borderRadius: 6, color: T.text, fontSize: 13, fontFamily: "monospace",
-                    fontWeight: 700, padding: "6px 8px", textAlign: "right",
-                    outline: "none"
-                  }}
-                />
+                    fontWeight: 700, padding: "6px 8px", textAlign: "right", outline: "none" }} />
                 <span style={{ fontSize: 12, color: T.muted }}>%</span>
               </div>
-              {/* Remove */}
-              <button
-                onClick={() => onUpdate("remove", ticker, null)}
-                style={{ background: "none", border: "none", color: T.muted, cursor: "pointer", fontSize: 16, padding: "2px 6px", borderRadius: 4, lineHeight: 1 }}
-                title="Remove"
-              >×</button>
+              <button onClick={() => onUpdate("remove", ticker, null)}
+                style={{ background: "none", border: "none", color: T.muted, cursor: "pointer", fontSize: 16, padding: "2px 6px" }}>×</button>
             </div>
           );
         })}
       </div>
-
-      {/* Add ticker row */}
       <div style={{ display: "flex", gap: 8 }}>
-        <input
-          type="text"
-          placeholder="Add ticker… e.g. META, BTC-USD, ^GSPC"
-          value={newTicker}
-          onChange={e => setNewTicker(e.target.value.toUpperCase())}
-          onKeyDown={handleKey}
-          style={{
-            flex: 1, background: T.bg, border: `1px solid ${T.borderLight}`,
+        <input type="text" placeholder="Add ticker… e.g. META, BTC-USD, ^GSPC"
+          value={newTicker} onChange={e => setNewTicker(e.target.value.toUpperCase())}
+          onKeyDown={e => e.key === "Enter" && handleAdd()}
+          style={{ flex: 1, background: T.bg, border: `1px solid ${T.borderLight}`,
             borderRadius: 8, color: T.text, fontSize: 13, fontFamily: "monospace",
-            padding: "10px 14px", outline: "none"
-          }}
-        />
-        <button
-          onClick={handleAdd}
-          disabled={adding || !newTicker.trim()}
-          style={{
-            background: adding || !newTicker.trim() ? T.surface : T.accent,
-            color: adding || !newTicker.trim() ? T.muted : T.bg,
+            padding: "10px 14px", outline: "none" }} />
+        <button onClick={handleAdd} disabled={adding || !newTicker.trim()}
+          style={{ background: adding || !newTicker.trim() ? T.border : T.accent,
+            color: adding || !newTicker.trim() ? T.muted : T.isDark ? "#07090F" : "#fff",
             border: "none", borderRadius: 8, padding: "10px 20px",
-            fontSize: 13, fontWeight: 700, cursor: adding || !newTicker.trim() ? "not-allowed" : "pointer",
-            fontFamily: "monospace", transition: "all 0.2s", whiteSpace: "nowrap"
-          }}
-        >
+            fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "monospace" }}>
           {adding ? "…" : "+ Add"}
         </button>
       </div>
-      <div style={{ fontSize: 10, color: T.muted, marginTop: 8 }}>
-        Works with stocks, ETFs, indices (^GSPC), crypto (BTC-USD), forex (EURUSD=X) via Yahoo Finance
-      </div>
+      <div style={{ fontSize: 10, color: T.muted, marginTop: 8 }}>Supports stocks, ETFs, indices (^GSPC), crypto (BTC-USD), forex (EURUSD=X)</div>
     </div>
   );
-};
+}
 
 // ── MAIN APP ──────────────────────────────────────────────────────────────────
-const DEFAULT_PORTFOLIO = {
-  AAPL:  { weight: "25", name: "Apple Inc.", days: null, currency: "USD" },
-  MSFT:  { weight: "20", name: "Microsoft Corp.", days: null, currency: "USD" },
-  GOOGL: { weight: "20", name: "Alphabet Inc.", days: null, currency: "USD" },
-  NVDA:  { weight: "20", name: "NVIDIA Corp.", days: null, currency: "USD" },
-  AMZN:  { weight: "15", name: "Amazon.com Inc.", days: null, currency: "USD" },
-};
-
-const RANGES = [
-  { label: "1M",  value: "1mo" },
-  { label: "3M",  value: "3mo" },
-  { label: "6M",  value: "6mo" },
-  { label: "1Y",  value: "1y"  },
-  { label: "2Y",  value: "2y"  },
-  { label: "5Y",  value: "5y"  },
-  { label: "Max", value: "max" },
-];
-
 export default function App() {
   const [portfolio, setPortfolio] = useState(DEFAULT_PORTFOLIO);
   const [priceMap, setPriceMap] = useState({});
+  const [benchmarkMap, setBenchmarkMap] = useState({});
   const [loadingTickers, setLoadingTickers] = useState(new Set());
   const [metrics, setMetrics] = useState(null);
   const [tab, setTab] = useState("overview");
   const [range, setRange] = useState("1y");
+  const [isDark, setIsDark] = useState(true);
+  const [activeBench, setActiveBench] = useState("SPY");
   const fetchedRef = useRef(new Set());
+  const T = isDark ? DARK : LIGHT;
 
-  // Fetch a single ticker — fetchTickerData never throws, always returns data
-  const fetchTicker = useCallback(async (ticker, r = "1y") => {
-    const key = ticker + "_" + r;
+  const fetchTicker = useCallback(async (ticker, r = "1y", isBench = false) => {
+    const key = ticker + "_" + r + (isBench ? "_b" : "");
     if (fetchedRef.current.has(key)) return;
     fetchedRef.current.add(key);
-    setLoadingTickers(s => new Set([...s, ticker]));
+    if (!isBench) setLoadingTickers(s => new Set([...s, ticker]));
     const data = await fetchTickerData(ticker, r);
-    setPriceMap(prev => ({ ...prev, [ticker]: data }));
-    setPortfolio(prev => ({
-      ...prev,
-      [ticker]: { ...prev[ticker], name: data.name, days: data.prices.length, currency: data.currency, simulated: data.simulated }
-    }));
-    setLoadingTickers(s => { const n = new Set(s); n.delete(ticker); return n; });
+    if (isBench) {
+      setBenchmarkMap(prev => ({ ...prev, [ticker]: data }));
+    } else {
+      setPriceMap(prev => ({ ...prev, [ticker]: data }));
+      setPortfolio(prev => ({
+        ...prev,
+        [ticker]: { ...prev[ticker], name: data.name, days: data.prices.length, currency: data.currency, simulated: data.simulated }
+      }));
+      setLoadingTickers(s => { const n = new Set(s); n.delete(ticker); return n; });
+    }
   }, []);
 
-  // Fetch all tickers when range changes
   useEffect(() => {
-    fetchedRef.current = new Set(); // reset cache so new range is fetched
-    setPriceMap({});
-    Object.keys(portfolio).forEach(t => fetchTicker(t, range));
+    fetchedRef.current = new Set();
+    setPriceMap({}); setBenchmarkMap({});
+    Object.keys(portfolio).forEach(t => fetchTicker(t, range, false));
+    BENCHMARKS.forEach(b => fetchTicker(b, range, true));
   }, [range]);
 
-  // Initial fetch
   useEffect(() => {
-    Object.keys(DEFAULT_PORTFOLIO).forEach(t => fetchTicker(t, range));
+    Object.keys(DEFAULT_PORTFOLIO).forEach(t => fetchTicker(t, range, false));
+    BENCHMARKS.forEach(b => fetchTicker(b, range, true));
   }, []);
 
-  // Recompute metrics when priceMap or weights change
   useEffect(() => {
     const weights = {};
     Object.entries(portfolio).forEach(([t, v]) => {
       const w = parseFloat(v.weight);
       if (!isNaN(w) && w > 0 && priceMap[t]) weights[t] = w;
     });
-    if (Object.keys(weights).length === 0) { setMetrics(null); return; }
-    const m = computeMetrics(priceMap, weights);
-    setMetrics(m);
-  }, [priceMap, portfolio]);
+    if (Object.keys(weights).length === 0 || Object.keys(benchmarkMap).length === 0) { setMetrics(null); return; }
+    setMetrics(computeMetrics(priceMap, weights, benchmarkMap));
+  }, [priceMap, portfolio, benchmarkMap]);
 
-  // Handle portfolio updates
   const handleUpdate = async (action, ticker, value) => {
     if (action === "add") {
       setPortfolio(prev => ({ ...prev, [ticker]: { weight: "10", name: null, days: null, currency: null } }));
-      await fetchTicker(ticker, range);
+      await fetchTicker(ticker, range, false);
     } else if (action === "remove") {
       setPortfolio(prev => { const n = { ...prev }; delete n[ticker]; return n; });
       setPriceMap(prev => { const n = { ...prev }; delete n[ticker]; return n; });
-      fetchedRef.current.delete(ticker);
+      fetchedRef.current.delete(ticker + "_" + range);
     } else if (action === "weight") {
       setPortfolio(prev => ({ ...prev, [ticker]: { ...prev[ticker], weight: value } }));
     }
@@ -464,141 +479,101 @@ export default function App() {
   const isValid = Math.abs(totalWeight - 100) < 0.01;
   const hasData = metrics !== null;
   const activeTickers = Object.keys(portfolio).filter(t => priceMap[t]);
+  const bm = metrics?.benchmarkMetrics?.[activeBench];
 
   const TABS = [
     { id: "overview", label: "Overview" },
+    { id: "benchmark", label: "Benchmark" },
     { id: "risk", label: "Risk" },
     { id: "editor", label: "⚙ Portfolio" },
   ];
 
+  const cTooltip = (props) => <ChartTooltip {...props} T={T} />;
+
   return (
-    <div style={{ background: T.bg, minHeight: "100vh", color: T.text, fontFamily: "'DM Sans', 'Segoe UI', sans-serif" }}>
+    <div style={{ background: T.bg, minHeight: "100vh", color: T.text, fontFamily: "'DM Sans','Segoe UI',sans-serif", transition: "background 0.2s,color 0.2s" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,600;0,800;1,400&family=DM+Mono:wght@400;500;700&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        input[type=number]::-webkit-inner-spin-button { opacity: 0.4; }
-        input::placeholder { color: #3A4060; }
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-track { background: ${T.bg}; }
-        ::-webkit-scrollbar-thumb { background: ${T.border}; border-radius: 3px; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;800&family=DM+Mono:wght@400;500;700&display=swap');
+        *{box-sizing:border-box;margin:0;padding:0}
+        input[type=number]::-webkit-inner-spin-button{opacity:.3}
+        input::placeholder{color:${T.muted}}
+        ::-webkit-scrollbar{width:5px;height:5px}
+        ::-webkit-scrollbar-track{background:${T.bg}}
+        ::-webkit-scrollbar-thumb{background:${T.border};border-radius:3px}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
       `}</style>
 
-      {/* ── HEADER ── */}
+      {/* HEADER */}
       <div style={{ background: T.surface, borderBottom: `1px solid ${T.border}`, padding: "0 24px", position: "sticky", top: 0, zIndex: 200 }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 56, gap: 16 }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 56, gap: 12 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ width: 28, height: 28, borderRadius: 7, background: `linear-gradient(135deg, ${T.accent}, ${T.blue})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>◈</div>
+              <div style={{ width: 28, height: 28, borderRadius: 7, background: `linear-gradient(135deg,${T.accent},${T.blue})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>◈</div>
               <div>
-                <div style={{ fontSize: 14, fontWeight: 800, letterSpacing: "-0.01em" }}>Portfolio Analytics</div>
+                <div style={{ fontSize: 14, fontWeight: 800, letterSpacing: "-0.01em", color: T.text }}>Portfolio Analytics</div>
                 <div style={{ fontSize: 9, color: T.muted, fontFamily: "monospace", letterSpacing: "0.1em" }}>LIVE · YAHOO FINANCE</div>
               </div>
             </div>
-
-            {/* Status chips */}
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
               {loadingTickers.size > 0 && (
-                <div style={{ fontSize: 11, color: T.amber, background: T.amber + "15", border: `1px solid ${T.amber}30`, borderRadius: 6, padding: "3px 10px", fontFamily: "monospace" }}>
-                  ⟳ fetching {[...loadingTickers].join(", ")}
+                <div style={{ fontSize: 11, color: T.amber, background: T.amber + "18", border: `1px solid ${T.amber}35`, borderRadius: 6, padding: "3px 10px", fontFamily: "monospace" }}>
+                  ⟳ {[...loadingTickers].slice(0, 3).join(", ")}{loadingTickers.size > 3 ? "…" : ""}
                 </div>
               )}
               {hasData && loadingTickers.size === 0 && (
-                <div style={{ fontSize: 11, color: T.accent, background: T.accentDim, border: `1px solid ${T.accent}30`, borderRadius: 6, padding: "3px 10px", fontFamily: "monospace" }}>
-                  ● {activeTickers.length} assets · {metrics.days}d data
+                <div style={{ fontSize: 11, color: T.accent, background: T.accentDim, border: `1px solid ${T.accent}35`, borderRadius: 6, padding: "3px 10px", fontFamily: "monospace" }}>
+                  ● {activeTickers.length} assets · {metrics.days}d
                 </div>
               )}
               {!isValid && (
-                <div style={{ fontSize: 11, color: T.red, background: T.red + "15", border: `1px solid ${T.red}30`, borderRadius: 6, padding: "3px 10px", fontFamily: "monospace" }}>
-                  Σ ≠ 100%
-                </div>
+                <div style={{ fontSize: 11, color: T.red, background: T.red + "18", border: `1px solid ${T.red}35`, borderRadius: 6, padding: "3px 10px", fontFamily: "monospace" }}>Σ ≠ 100%</div>
               )}
+              {hasData && (
+                <button onClick={() => exportToPDF(metrics, portfolio, range)}
+                  style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 7,
+                    padding: "5px 12px", cursor: "pointer", fontSize: 11, fontWeight: 600,
+                    color: T.mutedLight, fontFamily: "monospace", display: "flex", alignItems: "center", gap: 4 }}>
+                  ↓ PDF
+                </button>
+              )}
+              <button onClick={() => setIsDark(d => !d)}
+                style={{ background: T.surfaceHigh, border: `1px solid ${T.border}`, borderRadius: 7,
+                  padding: "5px 10px", cursor: "pointer", fontSize: 14, lineHeight: 1 }}>
+                {isDark ? "☀️" : "🌙"}
+              </button>
             </div>
           </div>
-
-          {/* Tab bar + Range selector */}
+          {/* Tabs + Range */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingBottom: 10, flexWrap: "wrap", gap: 8 }}>
             <div style={{ display: "flex", gap: 4 }}>
-            {TABS.map(t => (
-              <button key={t.id} onClick={() => setTab(t.id)} style={{
-                background: tab === t.id ? T.accent : "transparent",
-                color: tab === t.id ? T.bg : T.muted,
-                border: `1px solid ${tab === t.id ? T.accent : T.border}`,
-                borderRadius: 7, padding: "6px 16px", cursor: "pointer",
-                fontSize: 12, fontWeight: 600, fontFamily: "monospace",
-                letterSpacing: "0.04em", transition: "all 0.15s"
-              }}>{t.label}</button>
-            ))}
+              {TABS.map(t => (
+                <button key={t.id} onClick={() => setTab(t.id)} style={{
+                  background: tab === t.id ? T.accent : "transparent",
+                  color: tab === t.id ? (isDark ? "#07090F" : "#fff") : T.muted,
+                  border: `1px solid ${tab === t.id ? T.accent : T.border}`,
+                  borderRadius: 7, padding: "6px 14px", cursor: "pointer",
+                  fontSize: 12, fontWeight: 600, fontFamily: "monospace", transition: "all 0.15s"
+                }}>{t.label}</button>
+              ))}
             </div>
-            {/* Range selector */}
             <div style={{ display: "flex", gap: 3, background: T.bg, borderRadius: 8, padding: 3, border: `1px solid ${T.border}` }}>
               {RANGES.map(r => (
-                <button
-                  key={r.value}
-                  onClick={() => setRange(r.value)}
-                  style={{
-                    background: range === r.value ? T.accent : "transparent",
-                    color: range === r.value ? T.bg : T.muted,
-                    border: "none", borderRadius: 6,
-                    padding: "4px 10px", cursor: "pointer",
-                    fontSize: 11, fontWeight: 700, fontFamily: "monospace",
-                    transition: "all 0.15s", whiteSpace: "nowrap"
-                  }}
-                >{r.label}</button>
+                <button key={r.value} onClick={() => setRange(r.value)} style={{
+                  background: range === r.value ? T.accent : "transparent",
+                  color: range === r.value ? (isDark ? "#07090F" : "#fff") : T.muted,
+                  border: "none", borderRadius: 6, padding: "4px 10px",
+                  cursor: "pointer", fontSize: 11, fontWeight: 700, fontFamily: "monospace", transition: "all 0.15s"
+                }}>{r.label}</button>
               ))}
             </div>
           </div>
         </div>
       </div>
 
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "28px 20px" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "28px 20px" }}>
 
-        {/* ── PORTFOLIO EDITOR TAB ── */}
-        {tab === "editor" && (
-          <div style={{ animation: "fadeIn 0.3s ease", display: "flex", flexDirection: "column", gap: 20 }}>
-            <PortfolioEditor
-              portfolio={portfolio}
-              onUpdate={handleUpdate}
-              loadingTickers={loadingTickers}
-
-            />
-
-            {/* Individual price charts */}
-            {activeTickers.length > 0 && (
-              <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 16 }}>Individual Price Performance</div>
-                <ResponsiveContainer width="100%" height={240}>
-                  <LineChart>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis dataKey="date" tick={{ fill: T.muted, fontSize: 9 }} tickCount={5} allowDuplicatedCategory={false} />
-                    <YAxis tick={{ fill: T.muted, fontSize: 9 }} tickFormatter={v => `${v}%`} />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Legend wrapperStyle={{ fontSize: 11, color: T.muted }} />
-                    {activeTickers.map((ticker, i) => {
-                      const prices = priceMap[ticker]?.prices ?? [];
-                      const p0 = prices[0]?.price ?? 1;
-                      const normalised = prices.map(d => ({ date: d.date, [ticker]: +((d.price / p0 - 1) * 100).toFixed(2) }));
-                      return (
-                        <Line
-                          key={ticker}
-                          data={normalised}
-                          type="monotone"
-                          dataKey={ticker}
-                          stroke={PALETTE[i % PALETTE.length]}
-                          strokeWidth={1.5}
-                          dot={false}
-                        />
-                      );
-                    })}
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ── NO DATA STATE ── */}
+        {/* Loading / empty state */}
         {tab !== "editor" && !hasData && (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "80px 20px", gap: 16 }}>
             {loadingTickers.size > 0 ? (
@@ -609,35 +584,28 @@ export default function App() {
             ) : (
               <>
                 <div style={{ fontSize: 36 }}>📊</div>
-                <div style={{ color: T.muted, fontSize: 14, textAlign: "center" }}>
-                  {!isValid ? "Set weights summing to 100% to see analytics" : "Add assets in the Portfolio tab to get started"}
-                </div>
-                <button onClick={() => setTab("editor")} style={{ background: T.accent, color: T.bg, border: "none", borderRadius: 8, padding: "10px 24px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
-                  Open Portfolio Editor
-                </button>
+                <div style={{ color: T.muted, fontSize: 14 }}>Set weights summing to 100% to see analytics</div>
+                <button onClick={() => setTab("editor")} style={{ background: T.accent, color: isDark ? "#07090F" : "#fff", border: "none", borderRadius: 8, padding: "10px 24px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>Open Portfolio Editor</button>
               </>
             )}
           </div>
         )}
 
-        {/* ── OVERVIEW TAB ── */}
+        {/* ── OVERVIEW ── */}
         {tab === "overview" && hasData && (
           <div style={{ animation: "fadeIn 0.3s ease", display: "flex", flexDirection: "column", gap: 24 }}>
-            {/* Banner */}
-            <div style={{ background: `linear-gradient(135deg, ${T.accent}12, ${T.blue}10)`, border: `1px solid ${T.accent}25`, borderRadius: 12, padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+            <div style={{ background: isDark ? `linear-gradient(135deg,${T.accent}12,${T.blue}10)` : `linear-gradient(135deg,${T.accent}18,${T.blue}12)`,
+              border: `1px solid ${T.accent}25`, borderRadius: 12, padding: "20px 28px",
+              display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
               <div>
-                <div style={{ fontSize: 11, color: T.muted, marginBottom: 4, letterSpacing: "0.08em" }}>
-                  {activeTickers.join(" · ")}
-                </div>
+                <div style={{ fontSize: 11, color: T.muted, marginBottom: 4 }}>{activeTickers.join(" · ")}</div>
                 <div style={{ fontSize: 30, fontWeight: 800, letterSpacing: "-0.02em" }}>
-                  <span style={{ color: metrics.totalReturn >= 0 ? T.accent : T.red }}>
-                    {metrics.totalReturn >= 0 ? "+" : ""}{fmt(metrics.totalReturn)}%
-                  </span>
+                  <span style={{ color: metrics.totalReturn >= 0 ? T.accent : T.red }}>{metrics.totalReturn >= 0 ? "+" : ""}{metrics.totalReturn.toFixed(2)}%</span>
                   <span style={{ fontSize: 14, color: T.muted, fontWeight: 400, marginLeft: 10 }}>total return · {metrics.days} trading days</span>
                 </div>
               </div>
               <div style={{ display: "flex", gap: 28 }}>
-                {[["Sharpe", fmt(metrics.sharpe)], ["Sortino", fmt(metrics.sortino)], ["Max DD", `-${fmt(metrics.maxDD)}%`]].map(([l, v]) => (
+                {[["Sharpe", metrics.sharpe.toFixed(2)], ["Sortino", metrics.sortino.toFixed(2)], ["Max DD", `-${metrics.maxDD.toFixed(2)}%`]].map(([l, v]) => (
                   <div key={l} style={{ textAlign: "center" }}>
                     <div style={{ fontSize: 10, color: T.muted, marginBottom: 2 }}>{l}</div>
                     <div style={{ fontSize: 20, fontWeight: 700, fontFamily: "monospace", color: T.text }}>{v}</div>
@@ -646,73 +614,62 @@ export default function App() {
               </div>
             </div>
 
-            {/* Metrics grid */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12 }}>
-              <MetricCard label="Total Return" value={`${metrics.totalReturn >= 0 ? "+" : ""}${fmt(metrics.totalReturn)}%`} color={metrics.totalReturn >= 0 ? T.accent : T.red} />
-              <MetricCard label="Sharpe Ratio" value={fmt(metrics.sharpe)} sub="Annualised" color={T.accent} />
-              <MetricCard label="Sortino Ratio" value={fmt(metrics.sortino)} sub="Downside adj." color={T.blue} />
-              <MetricCard label="Volatility" value={`${fmt(metrics.annVol)}%`} sub="Annualised" color={T.purple} />
-              <MetricCard label="Max Drawdown" value={`-${fmt(metrics.maxDD)}%`} color={T.red} warn />
-              <MetricCard label="VaR 95% (1d)" value={`${fmt(metrics.var95)}%`} color={T.amber} />
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 12 }}>
+              <MetricCard T={T} label="Total Return" value={`${metrics.totalReturn>=0?"+":""}${metrics.totalReturn.toFixed(2)}%`} color={metrics.totalReturn>=0?T.accent:T.red} />
+              <MetricCard T={T} label="Ann. Return" value={`${metrics.annReturn>=0?"+":""}${metrics.annReturn.toFixed(2)}%`} color={T.accent} />
+              <MetricCard T={T} label="Sharpe Ratio" value={metrics.sharpe.toFixed(2)} sub="Annualised" color={T.accent} />
+              <MetricCard T={T} label="Sortino Ratio" value={metrics.sortino.toFixed(2)} sub="Downside adj." color={T.blue} />
+              <MetricCard T={T} label="Calmar Ratio" value={metrics.calmar ? metrics.calmar.toFixed(2) : "—"} color={T.blue} />
+              <MetricCard T={T} label="Volatility" value={`${metrics.annVol.toFixed(2)}%`} sub="Annualised" color={T.purple} />
+              <MetricCard T={T} label="Max Drawdown" value={`-${metrics.maxDD.toFixed(2)}%`} color={T.red} warn />
+              <MetricCard T={T} label="VaR 95% (1d)" value={`${metrics.var95.toFixed(2)}%`} color={T.amber} />
             </div>
 
-            {/* Cumulative return chart */}
             <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24 }}>
-              <div style={{ fontSize: 12, color: T.muted, fontFamily: "monospace", marginBottom: 16 }}>CUMULATIVE RETURN</div>
-              <ResponsiveContainer width="100%" height={260}>
-                <AreaChart data={metrics.series.filter((_, i) => i % 2 === 0)}>
-                  <defs>
-                    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={T.accent} stopOpacity={0.3} />
-                      <stop offset="95%" stopColor={T.accent} stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
+              <div style={{ fontSize: 12, color: T.muted, fontFamily: "monospace", marginBottom: 16 }}>CUMULATIVE RETURN vs BENCHMARKS</div>
+              <ResponsiveContainer width="100%" height={280}>
+                <LineChart data={metrics.series.filter((_,i)=>i%2===0)}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                   <XAxis dataKey="date" tick={{ fill: T.muted, fontSize: 9 }} tickCount={6} />
-                  <YAxis tick={{ fill: T.muted, fontSize: 9 }} tickFormatter={v => `${v}%`} />
-                  <Tooltip content={<CustomTooltip />} />
+                  <YAxis tick={{ fill: T.muted, fontSize: 9 }} tickFormatter={v=>`${v}%`} />
+                  <Tooltip content={cTooltip} />
+                  <Legend wrapperStyle={{ fontSize: 11, color: T.muted }} />
                   <ReferenceLine y={0} stroke={T.border} />
-                  <Area type="monotone" dataKey="portfolio" name="Portfolio" stroke={T.accent} fill="url(#g1)" strokeWidth={2} dot={false} />
-                </AreaChart>
+                  <Line type="monotone" dataKey="portfolio" name="Portfolio" stroke={T.accent} strokeWidth={2.5} dot={false} />
+                  <Line type="monotone" dataKey="SPY" name="SPY" stroke={BENCH_COLORS.SPY} strokeWidth={1.5} dot={false} strokeDasharray="5 3" />
+                  <Line type="monotone" dataKey="QQQ" name="QQQ" stroke={BENCH_COLORS.QQQ} strokeWidth={1.5} dot={false} strokeDasharray="3 2" />
+                </LineChart>
               </ResponsiveContainer>
             </div>
 
-            {/* Drawdown */}
             <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24 }}>
               <div style={{ fontSize: 12, color: T.muted, fontFamily: "monospace", marginBottom: 16 }}>DRAWDOWN</div>
               <ResponsiveContainer width="100%" height={160}>
-                <AreaChart data={metrics.drawdownSeries.filter((_, i) => i % 2 === 0)}>
-                  <defs>
-                    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={T.red} stopOpacity={0.4} />
-                      <stop offset="95%" stopColor={T.red} stopOpacity={0.02} />
-                    </linearGradient>
-                  </defs>
+                <AreaChart data={metrics.drawdownSeries.filter((_,i)=>i%2===0)}>
+                  <defs><linearGradient id="ddg" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={T.red} stopOpacity={0.4}/><stop offset="95%" stopColor={T.red} stopOpacity={0.02}/></linearGradient></defs>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                   <XAxis dataKey="date" tick={{ fill: T.muted, fontSize: 9 }} tickCount={6} />
-                  <YAxis tick={{ fill: T.muted, fontSize: 9 }} tickFormatter={v => `${v}%`} />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Area type="monotone" dataKey="drawdown" name="Drawdown" stroke={T.red} fill="url(#g2)" strokeWidth={1.5} dot={false} />
+                  <YAxis tick={{ fill: T.muted, fontSize: 9 }} tickFormatter={v=>`${v}%`} />
+                  <Tooltip content={cTooltip} />
+                  <Area type="monotone" dataKey="drawdown" name="Drawdown" stroke={T.red} fill="url(#ddg)" strokeWidth={1.5} dot={false} />
                   <ReferenceLine y={0} stroke={T.border} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
 
-            {/* Weight bars */}
             <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24 }}>
               <div style={{ fontSize: 12, color: T.muted, fontFamily: "monospace", marginBottom: 16 }}>PORTFOLIO WEIGHTS</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                {Object.entries(portfolio).filter(([t]) => priceMap[t]).map(([ticker, info], i) => {
-                  const w = parseFloat(info.weight) || 0;
-                  const color = PALETTE[i % PALETTE.length];
+                {Object.entries(portfolio).filter(([t])=>priceMap[t]).map(([ticker, info], i) => {
+                  const w = parseFloat(info.weight)||0, color = PALETTE[i%PALETTE.length];
                   return (
                     <div key={ticker}>
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5, fontSize: 12 }}>
-                        <span style={{ color: color, fontWeight: 700, fontFamily: "monospace" }}>{ticker}</span>
+                        <span style={{ color, fontWeight: 700, fontFamily: "monospace" }}>{ticker}</span>
                         <span style={{ color: T.mutedLight, fontFamily: "monospace" }}>{w.toFixed(1)}%</span>
                       </div>
                       <div style={{ height: 5, background: T.border, borderRadius: 3 }}>
-                        <div style={{ width: `${Math.min(w, 100)}%`, height: "100%", background: color, borderRadius: 3, transition: "width 0.4s ease" }} />
+                        <div style={{ width: `${Math.min(w,100)}%`, height: "100%", background: color, borderRadius: 3, transition: "width 0.4s" }} />
                       </div>
                     </div>
                   );
@@ -722,57 +679,146 @@ export default function App() {
           </div>
         )}
 
-        {/* ── RISK TAB ── */}
-        {tab === "risk" && hasData && (
+        {/* ── BENCHMARK ── */}
+        {tab === "benchmark" && hasData && (
           <div style={{ animation: "fadeIn 0.3s ease", display: "flex", flexDirection: "column", gap: 24 }}>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12 }}>
-              <MetricCard label="VaR 95% (1d)" value={`${fmt(metrics.var95)}%`} color={T.amber} />
-              <MetricCard label="Exp. Shortfall" value={`${fmt(metrics.es95)}%`} sub="CVaR 95%" color={T.red} />
-              <MetricCard label="Ann. Volatility" value={`${fmt(metrics.annVol)}%`} color={T.purple} />
-              <MetricCard label="Max Drawdown" value={`-${fmt(metrics.maxDD)}%`} color={T.red} warn />
+            <div style={{ display: "flex", gap: 8 }}>
+              {BENCHMARKS.map(b => (
+                <button key={b} onClick={() => setActiveBench(b)} style={{
+                  background: activeBench===b ? BENCH_COLORS[b] : T.surface,
+                  color: activeBench===b ? "#fff" : T.muted,
+                  border: `1px solid ${activeBench===b ? BENCH_COLORS[b] : T.border}`,
+                  borderRadius: 8, padding: "8px 24px", cursor: "pointer",
+                  fontSize: 13, fontWeight: 700, fontFamily: "monospace", transition: "all 0.15s"
+                }}>{b}</button>
+              ))}
             </div>
 
-            {/* Rolling vol */}
+            {bm && (
+              <>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 12 }}>
+                  <MetricCard T={T} label="Beta" value={bm.beta.toFixed(3)} sub={`vs ${activeBench}`} color={T.blue} />
+                  <MetricCard T={T} label="Alpha (ann.)" value={`${bm.alpha>=0?"+":""}${bm.alpha.toFixed(2)}%`} sub="Jensen's alpha" color={bm.alpha>=0?T.accent:T.red} />
+                  <MetricCard T={T} label="Tracking Error" value={`${bm.te.toFixed(2)}%`} sub="Annualised" color={T.purple} />
+                  <MetricCard T={T} label="Info. Ratio" value={bm.ir.toFixed(2)} sub="Active return / TE" color={bm.ir>=0.5?T.accent:T.amber} />
+                  <MetricCard T={T} label="Correlation" value={bm.corr.toFixed(3)} sub={`with ${activeBench}`} color={T.blue} />
+                </div>
+
+                {/* Interpretation */}
+                <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24 }}>
+                  <div style={{ fontSize: 12, color: T.muted, fontFamily: "monospace", marginBottom: 16 }}>INTERPRETATION</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    {[
+                      { label: "Beta", value: bm.beta,
+                        color: Math.abs(bm.beta-1)<0.2 ? T.amber : bm.beta>1.2 ? T.red : T.accent,
+                        text: bm.beta>1.2 ? `High beta (${bm.beta.toFixed(2)}) — portfolio is ${((bm.beta-1)*100).toFixed(0)}% more volatile than ${activeBench}` :
+                          bm.beta<0.8 ? `Low beta (${bm.beta.toFixed(2)}) — defensive, less sensitive to market moves` :
+                          `Market-neutral beta (${bm.beta.toFixed(2)}) — broadly aligned with ${activeBench}` },
+                      { label: "Alpha", value: bm.alpha,
+                        color: bm.alpha>0 ? T.accent : T.red,
+                        text: bm.alpha>0 ? `Generating +${bm.alpha.toFixed(2)}% annualised excess return above market risk — positive alpha` :
+                          `Underperforming by ${Math.abs(bm.alpha).toFixed(2)}% after adjusting for market risk (beta-adjusted)` },
+                      { label: "Info. Ratio", value: bm.ir,
+                        color: bm.ir>=0.5 ? T.accent : bm.ir>=0 ? T.amber : T.red,
+                        text: bm.ir>=0.5 ? `Strong IR (${bm.ir.toFixed(2)}) — active bets are consistently rewarded` :
+                          bm.ir>=0 ? `Modest IR (${bm.ir.toFixed(2)}) — some active value but inconsistent` :
+                          `Negative IR (${bm.ir.toFixed(2)}) — active positions are destroying value vs passive ${activeBench}` },
+                    ].map(({ label, value, color, text }) => (
+                      <div key={label} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "12px 16px",
+                        background: T.bg, borderRadius: 8, border: `1px solid ${T.borderLight}` }}>
+                        <div style={{ width: 8, height: 8, borderRadius: "50%", background: color, marginTop: 4, flexShrink: 0 }} />
+                        <div>
+                          <span style={{ color: T.mutedLight, fontSize: 11, fontFamily: "monospace" }}>{label}: </span>
+                          <span style={{ color: T.text, fontSize: 12 }}>{text}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24 }}>
+                  <div style={{ fontSize: 12, color: T.muted, fontFamily: "monospace", marginBottom: 16 }}>PORTFOLIO vs {activeBench}</div>
+                  <ResponsiveContainer width="100%" height={260}>
+                    <LineChart data={metrics.series.filter((_,i)=>i%2===0)}>
+                      <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                      <XAxis dataKey="date" tick={{ fill: T.muted, fontSize: 9 }} tickCount={6} />
+                      <YAxis tick={{ fill: T.muted, fontSize: 9 }} tickFormatter={v=>`${v}%`} />
+                      <Tooltip content={cTooltip} />
+                      <Legend wrapperStyle={{ fontSize: 11 }} />
+                      <ReferenceLine y={0} stroke={T.border} />
+                      <Line type="monotone" dataKey="portfolio" name="Portfolio" stroke={T.accent} strokeWidth={2.5} dot={false} />
+                      <Line type="monotone" dataKey={activeBench} name={activeBench} stroke={BENCH_COLORS[activeBench]} strokeWidth={1.5} dot={false} strokeDasharray="5 3" />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24 }}>
+                  <div style={{ fontSize: 12, color: T.muted, fontFamily: "monospace", marginBottom: 16 }}>ACTIVE RETURN (PORTFOLIO − {activeBench})</div>
+                  <ResponsiveContainer width="100%" height={180}>
+                    <AreaChart data={metrics.series.filter((_,i)=>i%2===0).map(d=>({ date: d.date, active: +((d.portfolio-(d[activeBench]??0))).toFixed(2) }))}>
+                      <defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={T.accent} stopOpacity={0.3}/><stop offset="95%" stopColor={T.accent} stopOpacity={0}/></linearGradient></defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                      <XAxis dataKey="date" tick={{ fill: T.muted, fontSize: 9 }} tickCount={6} />
+                      <YAxis tick={{ fill: T.muted, fontSize: 9 }} tickFormatter={v=>`${v}%`} />
+                      <Tooltip content={cTooltip} />
+                      <ReferenceLine y={0} stroke={T.mutedLight} strokeDasharray="4 2" />
+                      <Area type="monotone" dataKey="active" name="Active Return" stroke={T.accent} fill="url(#ag)" strokeWidth={1.5} dot={false} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* ── RISK ── */}
+        {tab === "risk" && hasData && (
+          <div style={{ animation: "fadeIn 0.3s ease", display: "flex", flexDirection: "column", gap: 24 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 12 }}>
+              <MetricCard T={T} label="VaR 95% (1d)" value={`${metrics.var95.toFixed(2)}%`} color={T.amber} />
+              <MetricCard T={T} label="Exp. Shortfall" value={`${metrics.es95.toFixed(2)}%`} sub="CVaR 95%" color={T.red} />
+              <MetricCard T={T} label="Volatility" value={`${metrics.annVol.toFixed(2)}%`} color={T.purple} />
+              <MetricCard T={T} label="Max Drawdown" value={`-${metrics.maxDD.toFixed(2)}%`} color={T.red} warn />
+              <MetricCard T={T} label="Sortino Ratio" value={metrics.sortino.toFixed(2)} color={T.blue} />
+              <MetricCard T={T} label="Calmar Ratio" value={metrics.calmar ? metrics.calmar.toFixed(2) : "—"} color={T.blue} />
+            </div>
+
             <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24 }}>
               <div style={{ fontSize: 12, color: T.muted, fontFamily: "monospace", marginBottom: 16 }}>ROLLING 20-DAY VOLATILITY (ANN.)</div>
               <ResponsiveContainer width="100%" height={210}>
-                <LineChart data={metrics.rollingVol.filter(d => d.vol !== null).filter((_, i) => i % 2 === 0)}>
+                <LineChart data={metrics.rollingVol.filter(d=>d.vol!==null).filter((_,i)=>i%2===0)}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                   <XAxis dataKey="date" tick={{ fill: T.muted, fontSize: 9 }} tickCount={6} />
-                  <YAxis tick={{ fill: T.muted, fontSize: 9 }} tickFormatter={v => `${v}%`} />
-                  <Tooltip content={<CustomTooltip />} />
+                  <YAxis tick={{ fill: T.muted, fontSize: 9 }} tickFormatter={v=>`${v}%`} />
+                  <Tooltip content={cTooltip} />
                   <Line type="monotone" dataKey="vol" name="Volatility" stroke={T.purple} strokeWidth={2} dot={false} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
 
-            {/* Return distribution */}
             <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24 }}>
               <div style={{ fontSize: 12, color: T.muted, fontFamily: "monospace", marginBottom: 16 }}>DAILY RETURN DISTRIBUTION</div>
               <ResponsiveContainer width="100%" height={190}>
                 <BarChart data={metrics.bins}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="range" tick={{ fill: T.muted, fontSize: 9 }} tickFormatter={v => `${v}%`} />
+                  <XAxis dataKey="range" tick={{ fill: T.muted, fontSize: 9 }} tickFormatter={v=>`${v}%`} />
                   <YAxis tick={{ fill: T.muted, fontSize: 9 }} />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="count" name="Days" fill={T.blue} radius={[3, 3, 0, 0]} />
-                  <ReferenceLine x={fmt(metrics.var95, 1)} stroke={T.red} strokeDasharray="4 2" />
+                  <Tooltip content={cTooltip} />
+                  <Bar dataKey="count" name="Days" fill={T.blue} radius={[3,3,0,0]} />
+                  <ReferenceLine x={metrics.var95.toFixed(1)} stroke={T.red} strokeDasharray="4 2" />
                 </BarChart>
               </ResponsiveContainer>
-              <div style={{ fontSize: 11, color: T.muted, marginTop: 8 }}>
-                Red line = 95% VaR threshold ({fmt(metrics.var95)}% daily)
-              </div>
+              <div style={{ fontSize: 11, color: T.muted, marginTop: 8 }}>Red line = VaR 95% threshold ({metrics.var95.toFixed(2)}%)</div>
             </div>
 
-            {/* Individual asset risk table */}
             <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24 }}>
               <div style={{ fontSize: 12, color: T.muted, fontFamily: "monospace", marginBottom: 16 }}>INDIVIDUAL ASSET RISK</div>
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12, fontFamily: "monospace" }}>
                   <thead>
                     <tr style={{ borderBottom: `1px solid ${T.border}` }}>
-                      {["Ticker", "Weight", "Return", "Volatility", "Sharpe"].map(h => (
-                        <th key={h} style={{ padding: "8px 12px", color: T.muted, textAlign: h === "Ticker" ? "left" : "right", fontWeight: 600 }}>{h}</th>
+                      {["Ticker","Weight","Return","Volatility","Sharpe"].map(h=>(
+                        <th key={h} style={{ padding: "8px 12px", color: T.muted, textAlign: h==="Ticker"?"left":"right", fontWeight: 600 }}>{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -780,20 +826,20 @@ export default function App() {
                     {activeTickers.map((ticker, i) => {
                       const prices = priceMap[ticker]?.prices ?? [];
                       if (prices.length < 2) return null;
-                      const rets = prices.map((d, j) => j === 0 ? 0 : (d.price - prices[j-1].price) / prices[j-1].price).slice(1);
-                      const mean = rets.reduce((a,b)=>a+b,0)/rets.length;
-                      const std = Math.sqrt(rets.reduce((a,b)=>a+(b-mean)**2,0)/(rets.length-1));
-                      const totalRet = (prices[prices.length-1].price / prices[0].price - 1) * 100;
-                      const annVol = std * Math.sqrt(252) * 100;
-                      const sharpe = (mean/std)*Math.sqrt(252);
-                      const color = PALETTE[i % PALETTE.length];
+                      const rets = prices.map((d,j)=>j===0?0:(d.price-prices[j-1].price)/prices[j-1].price).slice(1);
+                      const mn = rets.reduce((a,b)=>a+b,0)/rets.length;
+                      const sd = Math.sqrt(rets.reduce((a,b)=>a+(b-mn)**2,0)/(rets.length-1));
+                      const totalRet = (prices[prices.length-1].price/prices[0].price-1)*100;
+                      const aVol = sd*Math.sqrt(252)*100;
+                      const sh = (mn/sd)*Math.sqrt(252);
+                      const color = PALETTE[i%PALETTE.length];
                       return (
                         <tr key={ticker} style={{ borderBottom: `1px solid ${T.border}` }}>
-                          <td style={{ padding: "10px 12px", color, fontWeight: 700 }}>{ticker}</td>
-                          <td style={{ padding: "10px 12px", color: T.mutedLight, textAlign: "right" }}>{portfolio[ticker]?.weight}%</td>
-                          <td style={{ padding: "10px 12px", color: totalRet >= 0 ? T.accent : T.red, textAlign: "right" }}>{totalRet >= 0 ? "+" : ""}{totalRet.toFixed(1)}%</td>
-                          <td style={{ padding: "10px 12px", color: T.purple, textAlign: "right" }}>{annVol.toFixed(1)}%</td>
-                          <td style={{ padding: "10px 12px", color: sharpe >= 1 ? T.accent : sharpe >= 0 ? T.amber : T.red, textAlign: "right" }}>{sharpe.toFixed(2)}</td>
+                          <td style={{ padding:"10px 12px",color,fontWeight:700 }}>{ticker}</td>
+                          <td style={{ padding:"10px 12px",color:T.mutedLight,textAlign:"right" }}>{portfolio[ticker]?.weight}%</td>
+                          <td style={{ padding:"10px 12px",color:totalRet>=0?T.accent:T.red,textAlign:"right" }}>{totalRet>=0?"+":""}{totalRet.toFixed(1)}%</td>
+                          <td style={{ padding:"10px 12px",color:T.purple,textAlign:"right" }}>{aVol.toFixed(1)}%</td>
+                          <td style={{ padding:"10px 12px",color:sh>=1?T.accent:sh>=0?T.amber:T.red,textAlign:"right" }}>{sh.toFixed(2)}</td>
                         </tr>
                       );
                     })}
@@ -801,6 +847,33 @@ export default function App() {
                 </table>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* ── EDITOR ── */}
+        {tab === "editor" && (
+          <div style={{ animation: "fadeIn 0.3s ease", display: "flex", flexDirection: "column", gap: 20 }}>
+            <PortfolioEditor portfolio={portfolio} onUpdate={handleUpdate} loadingTickers={loadingTickers} T={T} />
+            {activeTickers.length > 1 && (
+              <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24 }}>
+                <div style={{ fontSize: 12, color: T.muted, fontFamily: "monospace", marginBottom: 16 }}>INDIVIDUAL PRICE PERFORMANCE</div>
+                <ResponsiveContainer width="100%" height={240}>
+                  <LineChart>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="date" tick={{ fill: T.muted, fontSize: 9 }} tickCount={5} allowDuplicatedCategory={false} />
+                    <YAxis tick={{ fill: T.muted, fontSize: 9 }} tickFormatter={v=>`${v}%`} />
+                    <Tooltip content={cTooltip} />
+                    <Legend wrapperStyle={{ fontSize: 11, color: T.muted }} />
+                    {activeTickers.map((ticker, i) => {
+                      const prices = priceMap[ticker]?.prices ?? [];
+                      const p0 = prices[0]?.price ?? 1;
+                      const data = prices.map(d=>({ date: d.date, [ticker]: +((d.price/p0-1)*100).toFixed(2) }));
+                      return <Line key={ticker} data={data} type="monotone" dataKey={ticker} stroke={PALETTE[i%PALETTE.length]} strokeWidth={1.5} dot={false} />;
+                    })}
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            )}
           </div>
         )}
       </div>
